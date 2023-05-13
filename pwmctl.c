@@ -27,10 +27,11 @@ static void i2c_slave_handler(i2c_inst_t *i2c, i2c_slave_event_t event) {
     switch (event) {
         case I2C_SLAVE_RECEIVE: // if we get something
             if(context.loc > 3) {context.cmdstart = false;context.loc=0;context.execute++;memcpy(context.cmdbuf, context.cmd, sizeof(context.cmd));} // if we are beyond the last byte of the string, reset the commandin variable, reset the position variable, and copy the command to a more protected buffer. Then, change the value of the execute flag to let the main loop know it needs to execute a new command.
-            if (context.cmdstart == false) {
+            if (!(i2c_read_byte_raw(i2c) & 0x80)) {
                 uint8_t command_id = i2c_read_byte_raw(i2c);
-                context.cmd[context.loc] = command_id;
+                context.cmd[0] = command_id;
                 context.cmdstart = true;
+                context.loc=0;
             } else {
                 uint8_t data = i2c_read_byte_raw(i2c);
                 context.cmd[context.loc] = data;
