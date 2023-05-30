@@ -18,4 +18,5 @@ target_link_libraries(pwmctl
     pico_i2c_slave
     hardware_i2c
     pico_stdlib
+    hardware_pwm
     )
